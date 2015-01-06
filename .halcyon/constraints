@@ -38,6 +38,7 @@ file-embed-0.0.7.1
 free-4.10.0.1
 ghc-prim-0.3.1.0
 hashable-1.2.3.1
+hourglass-0.2.8
 http-date-0.0.4
 http-types-0.8.5
 integer-gmp-0.5.1.0
