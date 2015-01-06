@@ -3,16 +3,15 @@ import Control.Concurrent.STM
 import Control.Monad
 import Control.Monad.IO.Class
 import Data.Aeson
+import Data.Hourglass
 import Data.Proxy
 import Data.Text
-import Data.Time.Clock.POSIX
-import Data.Time.Format
 import GHC.Generics
 import Network.Wai.Handler.Warp
 import Servant
 import System.Environment
+import System.Hourglass
 import System.IO
-import System.Locale
 
 import qualified Data.Text as T
 import qualified Data.Text.IO as T
@@ -20,9 +19,8 @@ import qualified Data.Text.IO as T
 
 getISO8601DateTime :: IO Text
 getISO8601DateTime = do
-    seconds <- getPOSIXTime
-    let utc = posixSecondsToUTCTime seconds
-        iso = formatTime defaultTimeLocale "%FT%TZ" utc
+    seconds <- timeCurrent
+    let iso = timePrint ISO8601_DateAndTime seconds
     return $ T.pack iso
 
 
