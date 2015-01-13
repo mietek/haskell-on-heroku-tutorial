@@ -5,14 +5,25 @@ import Control.Monad.IO.Class
 import Data.Aeson
 import Data.Proxy
 import Data.Text
+import Data.Time.Clock.POSIX
+import Data.Time.Format
 import GHC.Generics
 import Network.Wai.Handler.Warp
 import Servant
 import System.Environment
 import System.IO
+import System.Locale
 
 import qualified Data.Text as T
 import qualified Data.Text.IO as T
+
+
+getISO8601DateTime :: IO Text
+getISO8601DateTime = do
+    seconds <- getPOSIXTime
+    let utc = posixSecondsToUTCTime seconds
+        iso = formatTime defaultTimeLocale "%FT%TZ" utc
+    return $ T.pack iso
 
 
 data Note = Note
@@ -45,10 +56,11 @@ getNotes notes =
 postNote :: MonadIO m => TVar [Note] -> PostNote -> m [Note]
 postNote notes post =
     liftIO $ do
-      T.putStrLn $ postContents post
+      iso <- getISO8601DateTime
+      T.putStrLn $ T.concat [iso, " ", postContents post]
       let note = Note
             { contents = postContents post
-            , dateTime = ""
+            , dateTime = iso
             }
       atomically $ do
         oldNotes <- readTVar notes

@@ -14,9 +14,11 @@ executable haskell-on-heroku-tutorial
   ghc-options:        -O2 -Wall -threaded
   build-depends:      base,
                       aeson,
+                      old-locale,
                       servant,
                       servant-server,
                       stm,
                       text,
+                      time,
                       transformers,
                       warp
