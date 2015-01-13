@@ -1,4 +1,6 @@
+import Control.Applicative
 import Control.Concurrent.STM
+import Control.Monad
 import Control.Monad.IO.Class
 import Data.Aeson
 import Data.Proxy
@@ -13,13 +15,23 @@ import qualified Data.Text as T
 import qualified Data.Text.IO as T
 
 
-newtype Note = Note
+data Note = Note
     { contents :: Text
+    , dateTime :: Text
     }
   deriving (Generic, Show)
 
-instance FromJSON Note
 instance ToJSON Note
+
+
+newtype PostNote = PostNote
+    { postContents :: Text
+    }
+  deriving Show
+
+instance FromJSON PostNote where
+    parseJSON (Object o) = PostNote <$> o .: "contents"
+    parseJSON _          = mzero
 
 
 emptyNotes :: IO (TVar [Note])
@@ -30,10 +42,14 @@ getNotes :: MonadIO m => TVar [Note] -> m [Note]
 getNotes notes =
     liftIO $ readTVarIO notes
 
-postNote :: MonadIO m => TVar [Note] -> Note -> m [Note]
-postNote notes note =
+postNote :: MonadIO m => TVar [Note] -> PostNote -> m [Note]
+postNote notes post =
     liftIO $ do
-      T.putStrLn $ contents note
+      T.putStrLn $ postContents post
+      let note = Note
+            { contents = postContents post
+            , dateTime = ""
+            }
       atomically $ do
         oldNotes <- readTVar notes
         let newNotes = note : oldNotes
@@ -44,7 +60,7 @@ postNote notes note =
 type NoteAPI =
          Get Text
     :<|> "notes" :> Get [Note]
-    :<|> "notes" :> ReqBody Note :> Post [Note]
+    :<|> "notes" :> ReqBody PostNote :> Post [Note]
 
 noteAPI :: Proxy NoteAPI
 noteAPI =
