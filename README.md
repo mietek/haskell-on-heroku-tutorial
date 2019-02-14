@@ -1,3 +1,10 @@
+-------------------------------------------------------------------------------
+
+This project is no longer maintained.
+
+-------------------------------------------------------------------------------
+
+
 _haskell-on-heroku-tutorial_
 ============================
 
@@ -34,4 +41,4 @@ Deploys in one click to a new [DigitalOcean](https://digitalocean.com/) droplet,
 About
 -----
 
-Made by [Miëtek Bak](https://mietek.io/).  Published under the [MIT X11 license](https://mietek.io/license/).
+Made by [Miëtek Bak](https://mietek.io/).  Published under the BSD license.
